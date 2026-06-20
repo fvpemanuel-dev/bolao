@@ -306,25 +306,27 @@ Salvar Palpite
 </div>
 
 </div>
-
-<!-- CARREGA A BIBLIOTECA PRIMEIRO -->
+<!-- Biblioteca do Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-// SUBSTITUA PELA URL DO SEU PROJETO
+// URL DO PROJETO (SEM /rest/v1/)
 const supabaseUrl =
-'https://xyvevejnonuxzowxjkzt.supabase.co/rest/v1/';
+'https://xyvevejnonuxzowxjkzt.supabase.co';
 
-// SUA CHAVE PUBLICÁVEL
+// CHAVE PUBLICÁVEL
 const supabaseKey =
 'sb_publishable_XKA2Otqh5RhZfbCQaDDu5A_0wavRkmT';
 
+// Cria conexão
 const supabase = window.supabase.createClient(
     supabaseUrl,
     supabaseKey
 );
 
+
+// SALVAR PARTICIPANTE
 async function adicionarParticipante(){
 
     const nome =
@@ -336,7 +338,7 @@ async function adicionarParticipante(){
     const golsEscocia =
     document.getElementById('golsEscocia').value;
 
-    if(!nome){
+    if(nome === ''){
         alert('Informe o nome');
         return;
     }
@@ -364,19 +366,22 @@ async function adicionarParticipante(){
 
     alert('Palpite registrado com sucesso!');
 
-    document.getElementById('nome').value='';
-    document.getElementById('golsBrasil').value='';
-    document.getElementById('golsEscocia').value='';
+    document.getElementById('nome').value = '';
+    document.getElementById('golsBrasil').value = '';
+    document.getElementById('golsEscocia').value = '';
 
     carregarParticipantes();
 }
 
+
+
+// CARREGAR PARTICIPANTES
 async function carregarParticipantes(){
 
     const { data, error } = await supabase
     .from('participantes')
     .select('*')
-    .order('id',{ascending:true});
+    .order('id', { ascending: true });
 
     if(error){
         console.error(error);
@@ -386,21 +391,21 @@ async function carregarParticipantes(){
     const tabela =
     document.getElementById('tabelaParticipantes');
 
-    tabela.innerHTML='';
+    tabela.innerHTML = '';
 
-    data.forEach((item,index)=>{
+    data.forEach((item, index) => {
 
         tabela.innerHTML += `
-        <tr>
-            <td>${index+1}</td>
-            <td>${item.nome}</td>
-            <td>
-            Brasil ${item.gols_brasil}
-            x
-            ${item.gols_escocia} Escócia
-            </td>
-            <td>R$ 10,00</td>
-        </tr>
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.nome}</td>
+                <td>
+                    Brasil ${item.gols_brasil}
+                    x
+                    ${item.gols_escocia} Escócia
+                </td>
+                <td>R$ 10,00</td>
+            </tr>
         `;
     });
 
@@ -414,14 +419,17 @@ async function carregarParticipantes(){
     .innerText = `R$ ${premio.toFixed(2)}`;
 }
 
+
+
+// ATUALIZA AUTOMATICAMENTE
 supabase
 .channel('participantes')
 .on(
     'postgres_changes',
     {
-        event:'*',
-        schema:'public',
-        table:'participantes'
+        event: '*',
+        schema: 'public',
+        table: 'participantes'
     },
     () => {
         carregarParticipantes();
@@ -429,9 +437,13 @@ supabase
 )
 .subscribe();
 
+
+// CARREGA AO ABRIR A PÁGINA
 carregarParticipantes();
 
 </script>
 
+</body>
+</html>
 </body>
 </html>

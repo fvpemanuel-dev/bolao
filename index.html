@@ -336,12 +336,11 @@ const supabaseUrl =
 const supabaseKey =
 'sb_publishable_XKA2Otqh5RhZfbCQaDDu5A_0wavRkmT';
 
-const supabase =
+const db =
 window.supabase.createClient(
     supabaseUrl,
     supabaseKey
 );
-
 
 async function adicionarParticipante(){
 
@@ -365,7 +364,7 @@ if(golsBrasil === '' || golsEscocia === ''){
 }
 
 const { error } =
-await supabase
+    await db
 .from('participantes')
 .insert([{
     nome:nome,
